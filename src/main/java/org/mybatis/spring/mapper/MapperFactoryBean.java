@@ -91,7 +91,7 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
 
   /**
    * {@inheritDoc}
-   * 通过在容器中的mapperRegistry，返回当前mapper接口的动态代理
+   * 通过在容器中的mapperRegistry，返回当前mapper接口的动态代理(MapperProxy)
    */
   @Override
   public T getObject() throws Exception {

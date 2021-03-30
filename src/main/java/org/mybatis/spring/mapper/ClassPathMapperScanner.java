@@ -207,7 +207,6 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
       definition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName); // issue #59
       //将bean的类型转换成mapperFactoryBean
       definition.setBeanClass(this.mapperFactoryBeanClass);
-
       definition.getPropertyValues().add("addToConfig", this.addToConfig);
 
       boolean explicitFactoryUsed = false;
@@ -239,8 +238,10 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
         explicitFactoryUsed = true;
       }
 
-      //修改自动注入的方式 bytype
+      //修改自动注入的方式 bytype,这里设置后，MapperFactoryBean的setSqlSessionFactory（）方法会依赖注入SqlSessionFactory，
+      //原理在spring的AbstractAutowireCapableBeanFactory#populateBean#autowireByType方法中
       if (!explicitFactoryUsed) {
+
         LOGGER.debug(() -> "Enabling autowire by type for MapperFactoryBean with name '" + holder.getBeanName() + "'.");
         definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
       }

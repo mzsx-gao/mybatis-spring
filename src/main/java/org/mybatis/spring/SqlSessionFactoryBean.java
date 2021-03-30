@@ -488,9 +488,7 @@ public class SqlSessionFactoryBean
    *           if configuration is failed
    */
   protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
-
     final Configuration targetConfiguration;
-
     XMLConfigBuilder xmlConfigBuilder = null;
     if (this.configuration != null) {
       targetConfiguration = this.configuration;
