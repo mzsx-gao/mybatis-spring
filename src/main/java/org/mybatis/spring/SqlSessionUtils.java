@@ -94,16 +94,19 @@ public final class SqlSessionUtils {
     notNull(sessionFactory, NO_SQL_SESSION_FACTORY_SPECIFIED);
     notNull(executorType, NO_EXECUTOR_TYPE_SPECIFIED);
 
+    // 根据SqlSessionFactory从TransactionSynchronizationManager中获取SqlSessionHolder,
+    // 这里的SqlSession就是从TransactionSynchronizationManager的ThreadlLocal以sqlSessionFactory为key获取到的
     SqlSessionHolder holder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
-
+    //通过holder获取SqlSession,并且将其引用计数referenceCount + 1
     SqlSession session = sessionHolder(executorType, holder);
     if (session != null) {
       return session;
     }
 
     LOGGER.debug(() -> "Creating a new SqlSession");
+    //如果holder里没有SqlSession,那么就通过SqlSessionFactory创建一个新的DefaultSqlSession
     session = sessionFactory.openSession(executorType);
-
+    //注册生成的SqlSession
     registerSessionHolder(sessionFactory, executorType, exceptionTranslator, session);
 
     return session;
@@ -124,6 +127,8 @@ public final class SqlSessionUtils {
    *          persistenceExceptionTranslator used for registration.
    * @param session
    *          sqlSession used for registration.
+   * 将SqlSessionFactory和SqlSessionHolder以key-value的方式存储在TransactionSynchronizationManager的ThreadLocal里，
+   * 这样我们才能够从ThreadLocal里获取到对应的SqlSessionHolder
    */
   private static void registerSessionHolder(SqlSessionFactory sessionFactory, ExecutorType executorType,
       PersistenceExceptionTranslator exceptionTranslator, SqlSession session) {
